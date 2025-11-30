@@ -1,0 +1,14 @@
+{
+  "tasks": {
+    "dev": "deno run --watch main.ts"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@1",
+    "@std/dotenv": "jsr:@std/dotenv@^0.225.5",
+    "dotenv": "npm:dotenv@^17.2.3",
+    "express": "npm:express@^5.1.0",
+    "pg": "npm:pg@^8.16.3",
+    "pg-hstore": "npm:pg-hstore@^2.3.4",
+    "sequelize": "npm:sequelize@^6.37.7"
+  }
+}
