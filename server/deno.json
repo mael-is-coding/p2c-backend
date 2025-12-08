@@ -9,6 +9,7 @@
     "express": "npm:express@^5.1.0",
     "pg": "npm:pg@^8.16.3",
     "pg-hstore": "npm:pg-hstore@^2.3.4",
-    "sequelize": "npm:sequelize@^6.37.7"
+    "sequelize": "npm:sequelize@^6.37.7",
+    "zod": "npm:zod@^4.1.13"
   }
 }

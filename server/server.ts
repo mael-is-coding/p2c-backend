@@ -1,21 +1,27 @@
 // @ts-types="npm:@types/express@4.17.15"
 import express from "express";
 import "@std/dotenv/load";
-
+import ConnectionSingleton from "./database/connection.ts";
+import { WriteDatabase } from "./database/write-db.ts";
+import { ServerVars } from "./utils/environment.ts";
 
 const app = express();
 app.use(express.json());
 
-const PORT = Deno.env.get("SERVER_PORT");
-
-console.log(`PORT : ${PORT}`);
+const sequelize = ConnectionSingleton.getConnection();
+WriteDatabase({force: false});
 
 app.get('/', (_req, resp) => {
-    resp.send("Hello from Deno !");
+    resp.send("Place 2 Chill - Server is running\n");
 });
 
-if (PORT) {
-    app.listen({port: parseInt(PORT), hostname: `0.0.0.0`});
+app.post('/login', (req, resp) => {
+    
+});
+
+
+if (ServerVars.PORT) {
+    app.listen({port: parseInt(ServerVars.PORT)});
 } else {
-    app.listen({port: 3000, hostname: `0.0.0.0`});
+    app.listen({port: 3000});
 }

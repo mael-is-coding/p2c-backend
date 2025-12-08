@@ -1,7 +1,7 @@
 
 Deno.serve({
     port: 8080,
-    hostname: "0.0.0.0",
+    hostname: "127.0.0.1",
     async handler(request: Request) {
         if(request.headers.get("upgrade") !== "websocket") {
             const file = await Deno.open("./ws/index.html");

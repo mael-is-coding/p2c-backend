@@ -9,6 +9,8 @@ services:
       - database
     volumes:
       - /var/lib/docker/volumes/p2c-server:/server/data
+    links:
+      - "database:db"
 
   ws-server:
     build: ./websockets
