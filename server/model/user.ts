@@ -6,14 +6,14 @@ import ConnectionSingleton from "../database/connection.ts";
 const sequelize = ConnectionSingleton.getConnection();
 
 export const User = zod.object({
-    id: zod.number(),
     name: zod.string(),
     email: zod.email(),
+    password: zod.string(),
     phonenumber: zod.string(),
     profile_picture: zod.string()
 });
 
-type UserType = zod.infer<typeof User>
+export type UserType = zod.infer<typeof User>
 
 export const UserSequelize = sequelize.define(
     'User',
@@ -25,6 +25,7 @@ export const UserSequelize = sequelize.define(
         },
         name: DataTypes.STRING,
         email: DataTypes.STRING,
+        password: DataTypes.STRING,
         phonenumber: DataTypes.STRING,
         profile_picture: DataTypes.STRING
     }

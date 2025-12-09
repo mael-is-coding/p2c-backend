@@ -10,4 +10,4 @@ export const LoginModel = z.object({
     passphrase: z.string()
 });
 
-type LoginModelType = Infer<typeof LoginModel>;
+export type LoginModelType = Infer<typeof LoginModel>;
