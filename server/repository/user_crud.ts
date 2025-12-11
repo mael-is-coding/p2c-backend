@@ -1,9 +1,17 @@
 import { UserSequelize, UserType } from "../model/user.ts";
 
-export function findOne(id: number) {
+export function findOneUser(id: number) {
     return UserSequelize.findOne({
         where: {
             id: id
+        }
+    });
+}
+
+export function findOneUserByName(name: string) {
+    return UserSequelize.findOne({
+        where: {
+            name: name
         }
     });
 }

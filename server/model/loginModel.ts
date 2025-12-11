@@ -7,7 +7,7 @@ export interface LoginModel {
 
 export const LoginModel = z.object({
     username: z.string(),
-    passphrase: z.string()
+    password: z.string()
 });
 
 export type LoginModelType = Infer<typeof LoginModel>;
