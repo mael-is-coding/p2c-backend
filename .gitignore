@@ -1,3 +1,4 @@
 .env
 deno.lock
 curl*
+**/clients
