@@ -6,10 +6,11 @@ import ConnectionSingleton from "../database/connection.ts";
 const sequelize = ConnectionSingleton.getConnection();
 
 export const User = zod.object({
+    username: zod.string(),
     name: zod.string(),
     email: zod.email(),
     password: zod.string(),
-    phonenumber: zod.string(),
+    // phonenumber: zod.string(),
     profile_picture: zod.string()
 });
 

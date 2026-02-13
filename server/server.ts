@@ -1,18 +1,19 @@
-// @ts-types="npm:@types/express@4.17.15"
+//@ts-types="npm:@types/express@5.0.6"
 import express from "express";
-import "@std/dotenv/load";
-import { LoginModel } from "./model/loginModel.ts";
-import { User } from './model/user.ts';
+import { LoginModel, LoginModelWithEmail } from "./model/transaction/LoginModel.ts";
+import ResponseService from "./service/ResponseService.ts"
+import { User } from './model/User.ts';
 import { WriteDatabase } from "./database/write-db.ts";
 import { ServerVars } from "./utils/environment.ts";
-import { createUser, findOneUserByName } from "./repository/user_crud.ts";
-import bcrypt from 'bcryptjs'
+import { createUser, findOneUserByEmail, findOneUserByUsername } from "./repository/user_crud.ts";
+import bcrypt from 'bcryptjs';
+import "@std/dotenv/load";
 
-
-
-const app = express();
+const app = express(); 
 app.use(express.json());
 WriteDatabase({force: false});
+
+// TO DO : refactor séparation des endpoints --> Route controller [ Service ]
 
 app.get('/', (_req, resp) => {
     resp.send("Place 2 Chill - Server is running\n");
@@ -20,47 +21,67 @@ app.get('/', (_req, resp) => {
 
 app.post('/login', (req, resp) => {
     try {
-        const res = LoginModel.parse(req.body);
+        const res = (Object.hasOwn(req.body, "email") ? LoginModelWithEmail.safeParse(req.body) : LoginModel.safeParse(req.body))
 
-        const usr = findOneUserByName(res.username);
-        usr
-            .then((usr) => bcrypt.compareSync(res.password, usr?.dataValues.password))
-            .then((success) => resp.status(200).send(`server says ${success} : connected successfully`));
-        // if(bcrypt.compareSync(res.password, hash)) {
-
-        // }
+        if (res.error) {
+            console.log(`error while parsing login payload :\n${res.error}`);
+            resp.status(404).send(ResponseService.getFailureResponse("Some fields are invalid.", res.error.issues));
+        } else {
+            const usr = ("email" in res.data ? findOneUserByEmail(res.data.email) : findOneUserByUsername(res.data.username))
+            usr
+            .then((usr) => {
+                if(usr) {
+                    return bcrypt.compareSync(res.data.password, usr?.dataValues.password)
+                } else {
+                    return false;
+                }
+            })
+            .then((success) => {
+                success ? 
+                resp.status(200).send(ResponseService.getSuccessResponse("Log In was successful ! Welcome back :)")) : 
+                resp.status(401).send(ResponseService.getFailureResponse("Email/Username or password is incorrect, please try again !"));
+            });              
+        }
     } catch (error) {
         console.log(`[LOGIN] : error - invalid login request. Complete error below\n${error}`);
-        resp.status(401).send("Bad request");
+        resp.status(401).send(ResponseService.getFailureResponse("Could not login, problems occured.", error));
     }
 });
 
 app.post('/signup', (req, resp) => {
-    try {
-        const usr = User.parse(req.body);
-        usr.password = bcrypt.hashSync(usr.password);
-        createUser(usr)
-        .then((response) => response ? true : false)
-        .then((success) => {
-            if(success) {
-                resp.status(200).send("account successfully created :)");
-            } else {
-                resp.status(500).send("account could not be created, please try again :(");
+    const usr = User.safeParse(req.body);
+
+    if(usr.error) {
+        console.log(`[SIGNUP] : error - invalid signup request. Full error below\n${usr.error}\nbody : ${JSON.stringify(req.body)}`);
+        resp.status(401).send(ResponseService.getFailureResponse("Account could not be created as input was malformed.", usr.error));
+    } else {
+        (async () => {
+            const usr_with_email = await findOneUserByUsername(usr.data.name);
+
+            if (!usr_with_email) {
+                try {
+                    usr.data.password = bcrypt.hashSync(usr.data.password);
+                    await createUser(usr.data);
+                    resp.status(200).send(ResponseService.getSuccessResponse(`Account successfully created !`));
+                    console.log("user successfully created");
+                } catch (error) {
+                    console.log(`account could not be created, please try again :(. Full error :\n${error}`);
+                    resp.status(500).send(ResponseService.getFailureResponse(`account could not be created`, error));
+                }
             }
-        })
-        .catch((error) => {
-            console.log(`[LOGIN] : Internal Server Error... Please try again later :')\n${error}`);
-            resp.status(500).send(`[LOGIN] : Internal Server Error... Please try again later :')\n${error}`);
-        });
-    } catch (error) {
-        console.log(`[LOGIN] : error - invalid login request. Complete error below\n${error}`);
-        resp.status(401).send("Bad request");
+        })();
     }
-})
+});
 
 
 if (ServerVars.PORT) {
-    app.listen({port: parseInt(ServerVars.PORT)});
+    app.listen({
+        hostname: "0.0.0.0",
+        port: parseInt(ServerVars.PORT)
+    });
 } else {
-    app.listen({port: 3000});
+    app.listen({
+        hostname: "0.0.0.0",
+        port: 3000
+    });
 }
