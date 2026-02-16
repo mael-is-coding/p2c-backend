@@ -1,4 +1,4 @@
-import { z, infer as Infer} from 'zod';
+import { z, infer as Infer} from 'jsr:@zod/zod';
 
 export const LoginModel = z.object({
     username: z.string(),

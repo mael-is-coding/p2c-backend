@@ -1,3 +1,7 @@
 .env
 deno.lock
 curl*
+
+# in order to use sequelize-cli
+node_modules
+package*.json

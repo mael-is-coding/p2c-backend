@@ -1,5 +1,5 @@
 
-import { Sequelize } from "sequelize"
+import { Sequelize } from "npm:sequelize";
 
 export default class ConnectionSingleton {
     static connection: Sequelize;

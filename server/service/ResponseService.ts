@@ -1,6 +1,6 @@
-import { Failure, Success } from "../model/transaction/LoginResponse.ts";
+import { Failure, Success } from "../model/LoginResponse.ts";
 
-function getFailureResponse(text: string="unspecified", error: unknown="unspecified"): Failure {
+function getFailureResponse(text: string="No additionnal information", error: unknown={data: "No additionnal data"}): Failure {
     return {
         success: false,
         text: text,
@@ -8,11 +8,11 @@ function getFailureResponse(text: string="unspecified", error: unknown="unspecif
     }
 }
 
-function getSuccessResponse(text: string="unspecified"): Success {
+function getSuccessResponse(text: string="No additionnal information", data: unknown={data: "No additionnal data"}): Success {
     return {
         success: true,
         text: text,
-        time_authorized: Date().toString()
+        data: data
     }
 }
 

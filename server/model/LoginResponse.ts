@@ -1,16 +1,16 @@
 
-import zod from "zod";
+import zod from "@zod/zod";
 
 export const FailureResponseZod = zod.object({
     success: zod.boolean(),
     text: zod.string(),
-    error: zod.unknown()
+    error: zod.unknown(),
 });
 
 export const SuccessResponseZod = zod.object({
     success: zod.boolean(),
     text: zod.string(),
-    time_authorized: zod.string()
+    data: zod.unknown().optional().nullable()
 });
 
 export type Failure = zod.infer<typeof FailureResponseZod>;
