@@ -21,11 +21,15 @@ const login = async (payload: LoginModelType | LoginModelWithEmailType): Promise
     const usr = ("email" in payload ? 
         await UserService.readOneByEmail(payload.email) : 
         await UserService.readOneByUsername(payload.username));
-    if (usr) {
-        if (EncryptionService.compare(payload.password, usr.dataValues.password)) {
-            return ResponseService.getSuccessResponse("Successfully logged in.");
+    if (usr[0]) {
+        if (usr[0].password) {
+            if (EncryptionService.compare(payload.password, usr[0].password)) {
+                return ResponseService.getSuccessResponse("Successfully logged in.");
+            } else {
+                return ResponseService.getFailureResponse("Either email or password is incorrect. Please try again !");
+            }
         } else {
-            return ResponseService.getFailureResponse("Either email or password is incorrect. Please try again !");
+            return ResponseService.getFailureResponse("Internal Server Error, User isn't normally formed.");
         }
     } else {
         return ResponseService.getFailureResponse("No user was found. Please check your email")

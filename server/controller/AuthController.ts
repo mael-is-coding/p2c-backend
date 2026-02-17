@@ -14,8 +14,9 @@ const signupHandler = async (req: Request, resp: Response, next: NextFunction) =
         next();
     } else {
         const usr_with_email = await UserService.readOneByUsername(usr.data.name);
+        console.log(usr_with_email);
 
-        if (!usr_with_email) {
+        if (usr_with_email) {
             try {
                 const response = await AuthService.signup(usr.data);
                 if(response.success) {
@@ -30,7 +31,7 @@ const signupHandler = async (req: Request, resp: Response, next: NextFunction) =
                 next();
             }
         } else {
-            resp.status(401).send(ResponseService.getFailureResponse(`User with email ${usr.data.email}`));
+            resp.status(401).send(ResponseService.getFailureResponse(`User with email ${usr.data.email} already exists`));
             next();
         }
     };

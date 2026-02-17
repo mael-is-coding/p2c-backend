@@ -1,13 +1,13 @@
 //@ts-types="npm:@types/express@5.0.6"
 import express from "express";
-import { WriteDatabase } from "./database/WriteDatabase.ts";
+// import { WriteDatabase } from "./database/WriteDatabase.ts";
 import { ServerVars } from "./utils/Environment.ts";
 import "@std/dotenv/load";
 import AuthController from "./controller/AuthController.ts";
 
 const app = express(); 
 app.use(express.json());
-WriteDatabase({alter: true});
+// WriteDatabase({alter: true});
 
 // TO DO : refactor séparation des endpoints --> Route controller [ Service ]
 
