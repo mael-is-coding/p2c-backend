@@ -14,12 +14,11 @@ const signupHandler = async (req: Request, resp: Response, next: NextFunction) =
         next();
     } else {
         const usr_with_email = await UserService.readOneByUsername(usr.data.name);
-        console.log(usr_with_email);
 
         if (usr_with_email) {
             try {
                 const response = await AuthService.signup(usr.data);
-                if(response.success) {
+                if(response.s_success) {
                     resp.status(200).send(response);
                     next();
                 } else {
@@ -48,7 +47,7 @@ const loginHandler = async (req: Request, resp: Response, next: NextFunction) =>
             next();
         } else {
             const response = await AuthService.login(res.data);
-            if (response.success) {
+            if (response.s_success) {
                 resp.status(200).send(response);
                 next();
             } else {

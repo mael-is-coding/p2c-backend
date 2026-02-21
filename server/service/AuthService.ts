@@ -24,7 +24,8 @@ const login = async (payload: LoginModelType | LoginModelWithEmailType): Promise
     if (usr[0]) {
         if (usr[0].password) {
             if (EncryptionService.compare(payload.password, usr[0].password)) {
-                return ResponseService.getSuccessResponse("Successfully logged in.");
+                const {password, ...user} = usr[0];
+                return ResponseService.getSuccessResponse("Successfully logged in.", user);
             } else {
                 return ResponseService.getFailureResponse("Either email or password is incorrect. Please try again !");
             }
@@ -32,7 +33,7 @@ const login = async (payload: LoginModelType | LoginModelWithEmailType): Promise
             return ResponseService.getFailureResponse("Internal Server Error, User isn't normally formed.");
         }
     } else {
-        return ResponseService.getFailureResponse("No user was found. Please check your email")
+        return ResponseService.getFailureResponse("No user was found. Please check your credentials")
     }
 }
 

@@ -1,18 +1,18 @@
-import { Failure, Success } from "../model/LoginResponse.ts";
+import { ServerResponse } from "../model/LoginResponse.ts";
 
-function getFailureResponse(text: string="No additionnal information", error: unknown={data: "No additionnal data"}): Failure {
+function getFailureResponse(text: string="No additionnal information", error: unknown="No additionnal data"): ServerResponse {
     return {
-        success: false,
-        text: text,
-        error: error
+        s_success: false,
+        s_text: text,
+        s_error: error
     }
 }
 
-function getSuccessResponse(text: string="No additionnal information", data: unknown={data: "No additionnal data"}): Success {
+function getSuccessResponse(text: string="No additionnal information", data: unknown="No additionnal data"): ServerResponse {
     return {
-        success: true,
-        text: text,
-        data: data
+        s_success: true,
+        s_text: text,
+        s_data: data
     }
 }
 

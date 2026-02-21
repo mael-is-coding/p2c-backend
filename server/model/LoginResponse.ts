@@ -1,17 +1,23 @@
-
 import zod from "@zod/zod";
 
-export const FailureResponseZod = zod.object({
-    success: zod.boolean(),
-    text: zod.string(),
-    error: zod.unknown(),
+// s_* : to avoid property shadowing from Zod
+const FailureResponseZod = zod.object({
+    s_success: zod.literal(false),
+    s_text: zod.string(),
+    s_error: zod.unknown().nullable(),
 });
 
-export const SuccessResponseZod = zod.object({
-    success: zod.boolean(),
-    text: zod.string(),
-    data: zod.unknown().optional().nullable()
+const SuccessResponseZod = zod.object({
+    s_success: zod.literal(true),
+    s_text: zod.string(),
+    s_data: zod.unknown().nullable()
 });
+
+export const ServerResponseZod = zod.discriminatedUnion("s_success", [
+    SuccessResponseZod,
+    FailureResponseZod
+]);
 
 export type Failure = zod.infer<typeof FailureResponseZod>;
 export type Success = zod.infer<typeof SuccessResponseZod>;
+export type ServerResponse = zod.infer<typeof ServerResponseZod>;

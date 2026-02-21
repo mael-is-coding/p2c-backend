@@ -5,6 +5,13 @@ import { eq } from "drizzle-orm";
 
 const db = ConnectionSingleton.connection;
 
+const createUser = async (usr: UserType) => {
+    return (await db
+    .insert(usersTable)
+    .values(usr)
+    .returning())[0];
+}
+
 const findOneUser = (id: number) => {
     return db
     .select()
@@ -16,11 +23,6 @@ const findOneUser = (id: number) => {
         )
     )
     .limit(1);
-    // return UserSequelize.findOne({
-    //     where: {
-    //         id: id
-    //     }
-    // });
 }
 
 const findOneUserByUsername = (username: string) => {
@@ -34,12 +36,6 @@ const findOneUserByUsername = (username: string) => {
         )
     )
     .limit(1)
-    
-    /* UserSequelize.findOne({
-        where: {
-            username: username
-        }
-    }); */
 }
 
 const findOneUserByEmail = (email: string) => {
@@ -53,27 +49,14 @@ const findOneUserByEmail = (email: string) => {
         )
     )
     .limit(1);
-    
-    /* UserSequelize.findOne({
-        where: {
-            email: email
-        }
-    }); */
 }
 
 const findAllUsers = () => {
     return db
     .select()
     .from(usersTable);
-    /* UserSequelize.findAll(); */
 }
 
-const createUser = async (usr: UserType) => {
-    await db
-    .insert(usersTable)
-    .values(usr)
-    /* UserSequelize.create(usr); */
-}
 
 const updateUser = (id: number, usr: PartialUserType) => {
     return db
@@ -85,14 +68,28 @@ const updateUser = (id: number, usr: PartialUserType) => {
             id
         )
     )
-    
-    /* UserSequelize.update({
-        usr
-    }, {
-        where: {
-            id: id
-        }
-    }) */
+}
+
+const deleteOne = (id: number) => {
+    return db
+    .delete(usersTable)
+    .where(
+        eq (
+            usersTable.id,
+            id
+        )
+    );
+}
+
+const deleteByName = (username: string) => {
+    return db
+    .delete(usersTable)
+    .where(
+        eq(
+            usersTable.username,
+            username
+        )
+    );
 }
 
 const UserRepository = {
@@ -101,7 +98,9 @@ const UserRepository = {
     findOneUserByUsername,
     findAllUsers,
     createUser,
-    updateUser
+    updateUser,
+    deleteOne,
+    deleteByName
 }
 
 export default UserRepository;

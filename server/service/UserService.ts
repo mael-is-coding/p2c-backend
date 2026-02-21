@@ -25,13 +25,23 @@ const update = (id: number, usr: PartialUserType) => {
     return UserRepository.updateUser(id, usr);
 }
 
+const deleteUser = async (id: number) => { // not called delete because of shadowing
+    return (await UserRepository.deleteOne(id)).count;
+}
+
+const deleteUserByName = async (name: string) => {
+    return (await UserRepository.deleteByName(name)).count;
+}
+
 const UserService = {
     create,
     readOne,
     readOneByEmail,
     readOneByUsername,
     readAll,
-    update
+    update,
+    deleteUser,
+    deleteUserByName
 }
 
 export default UserService;
