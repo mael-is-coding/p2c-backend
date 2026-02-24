@@ -3,7 +3,9 @@ import { usersTable } from "../drizzle/schema.ts"
 import ConnectionSingleton from "../database/Connection.ts";
 import { eq } from "drizzle-orm";
 
-const db = ConnectionSingleton.connection;
+// TODO : refactor UD so they also return affected rows
+
+const db = ConnectionSingleton.getConnection();
 
 const createUser = async (usr: UserType) => {
     return (await db
@@ -25,8 +27,8 @@ const findOneUser = (id: number) => {
     .limit(1);
 }
 
-const findOneUserByUsername = (username: string) => {
-    return db
+const findOneUserByUsername = async (username: string) => {
+    return (await db
     .select()
     .from(usersTable)
     .where(
@@ -35,7 +37,7 @@ const findOneUserByUsername = (username: string) => {
             username
         )
     )
-    .limit(1)
+    .limit(1))[0];
 }
 
 const findOneUserByEmail = (email: string) => {

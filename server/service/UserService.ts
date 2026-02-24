@@ -5,8 +5,8 @@ const create = (usr: UserType) => {
     return UserRepository.createUser(usr);
 }
 
-const readOne = (id: number) => {
-    return UserRepository.findOneUser(id);
+const readOne = async (id: number) => {
+    return (await UserRepository.findOneUser(id))[0];
 }
 
 const readOneByEmail = (email: string) => {
