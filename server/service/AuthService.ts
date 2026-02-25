@@ -8,6 +8,7 @@ import EncryptionService from "./EncryptionService.ts";
 
 
 const signup = async (usr: UserType) => {
+    console.log("[signup] received user : ", usr);
     usr.password = EncryptionService.hash(usr.password);
     const res = await UserService.create(usr);
     return ResponseService.getSuccessResponse(
@@ -21,10 +22,10 @@ const login = async (payload: LoginModelType | LoginModelWithEmailType): Promise
     const usr = ("email" in payload ? 
         await UserService.readOneByEmail(payload.email) : 
         await UserService.readOneByUsername(payload.username));
-    if (usr[0]) {
-        if (usr[0].password) {
-            if (EncryptionService.compare(payload.password, usr[0].password)) {
-                const {password, ...user} = usr[0];
+    if (usr) {
+        if (usr.password) {
+            if (EncryptionService.compare(payload.password, usr.password)) {
+                const {password, ...user} = usr;
                 return ResponseService.getSuccessResponse("Successfully logged in.", user);
             } else {
                 return ResponseService.getFailureResponse("Either email or password is incorrect. Please try again !");

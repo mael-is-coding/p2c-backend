@@ -11,11 +11,11 @@ const createUser = async (usr: UserType) => {
     return (await db
     .insert(usersTable)
     .values(usr)
-    .returning())[0];
+    .returning())[0] ?? null;
 }
 
-const findOneUser = (id: number) => {
-    return db
+const findOneUser = async (id: number) => {
+    return (await db
     .select()
     .from(usersTable)
     .where(
@@ -24,7 +24,7 @@ const findOneUser = (id: number) => {
             id
         )
     )
-    .limit(1);
+    .limit(1))[0] ?? null;
 }
 
 const findOneUserByUsername = async (username: string) => {
@@ -37,11 +37,11 @@ const findOneUserByUsername = async (username: string) => {
             username
         )
     )
-    .limit(1))[0];
+    .limit(1))[0] ?? null;
 }
 
-const findOneUserByEmail = (email: string) => {
-    return db
+const findOneUserByEmail = async (email: string) => {
+    return (await db
     .select()
     .from(usersTable)
     .where(
@@ -50,13 +50,14 @@ const findOneUserByEmail = (email: string) => {
             email
         )
     )
-    .limit(1);
+    .limit(1))[0] ?? null;
 }
 
 const findAllUsers = () => {
     return db
     .select()
-    .from(usersTable);
+    .from(usersTable) 
+    ?? null;
 }
 
 
@@ -69,7 +70,7 @@ const updateUser = (id: number, usr: PartialUserType) => {
             usersTable.id,
             id
         )
-    )
+    ) ?? null;
 }
 
 const deleteOne = (id: number) => {
@@ -80,7 +81,7 @@ const deleteOne = (id: number) => {
             usersTable.id,
             id
         )
-    );
+    ) ?? null;
 }
 
 const deleteByName = (username: string) => {
@@ -91,7 +92,7 @@ const deleteByName = (username: string) => {
             usersTable.username,
             username
         )
-    );
+    ) ?? null;
 }
 
 const UserRepository = {

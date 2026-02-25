@@ -3,10 +3,10 @@ import { pgTable, serial, varchar, timestamp, integer, primaryKey, doublePrecisi
 export const usersTable = pgTable("Users", {
 	id: serial().primaryKey().notNull(),
 	name: varchar({ length: 255 }),
-	username: varchar({ length: 255 }),
-	email: varchar({ length: 255 }),
-	password: varchar({ length: 255 }),
 	phonenumber: varchar({ length: 255 }),
+	username: varchar({ length: 255 }).notNull(),
+	email: varchar({ length: 255 }).notNull().unique(),
+	password: varchar({ length: 255 }).notNull(),
 	profile_picture: varchar("profile_picture", { length: 255 }),
 	
 	createdAt: timestamp().notNull().defaultNow(),

@@ -13,9 +13,9 @@ const signupHandler = async (req: Request, resp: Response, next: NextFunction) =
         resp.status(401).send(ResponseService.getFailureResponse("Account could not be created as input was malformed.", usr.error));
         next();
     } else {
-        const usr_with_email = await UserService.readOneByUsername(usr.data.name);
+        const usr_with_email = await UserService.readOneByEmail(usr.data.email);
 
-        if (usr_with_email) {
+        if (usr_with_email === null) {
             try {
                 const response = await AuthService.signup(usr.data);
                 if(response.s_success) {
@@ -39,10 +39,8 @@ const signupHandler = async (req: Request, resp: Response, next: NextFunction) =
 
 const loginHandler = async (req: Request, resp: Response, next: NextFunction) => {
     try {
-        const res = (Object.hasOwn(req.body, "email") ? LoginModelWithEmail.safeParse(req.body) : LoginModel.safeParse(req.body))
-
+        const res = (Object.hasOwn(req.body, "email") ? LoginModelWithEmail.safeParse(req.body) : LoginModel.safeParse(req.body));
         if (res.error) {
-            console.log(`error while parsing login payload :\n${res.error}`);
             resp.status(401).send(ResponseService.getFailureResponse("Some fields are invalid.", res.error.issues));
             next();
         } else {
@@ -57,7 +55,6 @@ const loginHandler = async (req: Request, resp: Response, next: NextFunction) =>
         };              
     }
     catch (error) {
-        console.log(`[LOGIN] : error - invalid login request. Complete error below\n${error}`);
         resp.status(401).send(ResponseService.getFailureResponse("Could not login, problems occured.", error));
         next();
     }

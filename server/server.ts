@@ -13,6 +13,7 @@ const app = express();
 app.use(express.json());
 
 // TO DO : refactor séparation des endpoints --> Route controller [ Service ]
+// need to restrict user manipulation endpoints with JWT
 
 app.get('/', (_req, resp) => {
     resp.send("Place 2 Chill - Server is running\n");
@@ -20,12 +21,12 @@ app.get('/', (_req, resp) => {
 app.post('/login', AuthController.loginHandler);
 app.post('/signup', AuthController.signupHandler);
 
-// strictly internal to app.
-app.delete('/user/:username', async (req, resp) => {
-    const username = req.params.username;
-    const result = await UserService.deleteUserByName(username);
+
+app.delete('/user/:name', async (req, resp) => {
+    const name = req.params.name;
+    const result = await UserService.deleteUserByName(name);
     if (result > 0) {
-        resp.status(200).send(ResponseService.getSuccessResponse(`User ${username} was deleted`, 
+        resp.status(200).send(ResponseService.getSuccessResponse(`User ${name} was deleted`, 
             { 
                 affected_rows: result
             }
